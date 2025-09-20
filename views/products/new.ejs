@@ -1,0 +1,31 @@
+<%- include('../partials/header') %>
+
+    <h2 class="mb-4">Thêm sản phẩm mới</h2>
+
+    <form action="/products" method="POST">
+        <div class="mb-3">
+            <label class="form-label">Tên sản phẩm</label>
+            <input type="text" name="name" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Giá</label>
+            <input type="number" name="price" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Số lượng</label>
+            <input type="number" name="quantity" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Nhà cung cấp</label>
+            <select name="supplierId" class="form-select" required>
+      <option value="">-- Chọn nhà cung cấp --</option>
+      <% suppliers.forEach(s => { %>
+        <option value="<%= s._id %>"><%= s.name %></option>
+      <% }) %>
+    </select>
+        </div>
+        <button type="submit" class="btn btn-success">Thêm</button>
+        <a href="/products" class="btn btn-secondary">Hủy</a>
+    </form>
+
+    <%- include('../partials/footer') %>
