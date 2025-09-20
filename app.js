@@ -8,15 +8,20 @@ const path = require('path');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo');
-
-dotenv.config();
 const app = express();
 
-// Models
+// Load environment variables
+dotenv.config();
+
+// =====================
+// MODELS
+// =====================
 const Supplier = require('./models/Supplier');
 const Product = require('./models/Product');
 
-// Middleware
+// =====================
+// MIDDLEWARE
+// =====================
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(methodOverride('_method'));
@@ -25,7 +30,9 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(cookieParser());
 
-// Session configuration
+// =====================
+// SESSION CONFIG
+// =====================
 const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/product_supplier_login_db';
 app.use(
     session({
@@ -43,14 +50,14 @@ app.use((req, res, next) => {
     next();
 });
 
-// Routes
+// =====================
+// ROUTES
+// =====================
 const authRoutes = require('./routes/auth');
 const supplierRoutes = require('./routes/supplierRoutes');
 const productRoutes = require('./routes/productRoutes');
 
-// ============================
-// Index Route + Search/Filter
-// ============================
+// Index route with search/filter
 app.get('/', async(req, res) => {
     try {
         const suppliers = await Supplier.find();
@@ -67,16 +74,19 @@ app.get('/', async(req, res) => {
             selectedSupplier: req.query.supplierId || '',
         });
     } catch (err) {
-        res.status(500).send(err.message);
+        console.error(err);
+        res.status(500).send('Server error');
     }
 });
 
-// Other routes
+// Mount routes
 app.use('/auth', authRoutes);
 app.use('/suppliers', supplierRoutes);
 app.use('/products', productRoutes);
 
-// Swagger setup
+// =====================
+// SWAGGER SETUP
+// =====================
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 
@@ -96,13 +106,17 @@ const swaggerOptions = {
 const specs = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
-// MongoDB connection
+// =====================
+// MONGODB CONNECTION
+// =====================
 mongoose
     .connect(mongoUri)
     .then(() => console.log('✅ MongoDB Connected'))
-    .catch((err) => console.error(err));
+    .catch((err) => console.error('MongoDB connection error:', err));
 
-// Start server
+// =====================
+// START SERVER
+// =====================
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Server running at http://localhost:${PORT}`);
