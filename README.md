@@ -1,7 +1,7 @@
 
 ---
 
-# Product & Supplier Management System (VIP CRUD)
+# Product & Supplier Management System 
 
 ## Mô tả dự án
 
